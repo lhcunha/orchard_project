@@ -1,0 +1,31 @@
+version: '3'
+services:
+  database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: orchardpassword
+      MYSQL_DATABASE: orchard
+      MYSQL_USER: orchard
+      MYSQL_PASSWORD: orchardpassword
+    volumes:
+      - ./database:/var/lib/mysql
+    networks:
+      - orchard
+  # website:
+  #   build: ./website
+  #   restart: always
+  #   ports:
+  #     - "5000:5000"
+  #   depends_on:
+  #     - database
+  #   networks:
+  #     - orchard
+  api:
+    build: ./api
+    networks:
+      - orchard
+    depends_on:
+      - database
+networks:
+  orchard:
+    driver: bridge
