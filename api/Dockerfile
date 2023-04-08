@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "database.py" ]
+CMD [ "python", "database.py", ">>", "/api/output.txt" ]
