@@ -3,15 +3,20 @@ services:
   database:
     container_name: mysql
     image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: orchardpassword
-      MYSQL_DATABASE: orchard
-      MYSQL_USER: orchard
-      MYSQL_PASSWORD: orchardpassword
     volumes:
       - ./database:/var/lib/mysql
+    ports:
+      - "3306:3306"
     networks:
       - orchard
+  api:
+    container_name: api
+    build: ./api
+    networks:
+      - orchard
+    depends_on:
+      - database
+    restart: always
 
   # website:
   #   build: ./website
@@ -22,15 +27,7 @@ services:
   #     - database
   #   networks:
   #     - orchard
-  api:
-    build: ./api
-    networks:
-      - orchard
-    depends_on:
-      - database
-    restart: on-failure:10
-    volumes:
-      - ./api:/api
+  
 networks:
   orchard:
     driver: bridge
