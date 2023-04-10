@@ -27,13 +27,15 @@ def insert_csv_data():
 
     # Parse the CSV data and insert it into the CIAS_ABERTAS table
     print("Processing the collected data...")
-    csv_data = response.content.decode('utf-8').splitlines()
-    csv_reader = csv.reader(csv_data, delimiter=',', quotechar='"')
+    csv_data = response.content.decode('ISO-8859-1').splitlines()
+    csv_reader = csv.reader(csv_data, delimiter=';', quotechar='"')
     header = next(csv_reader)
     print("Inserting the processed data in the local table...")
     for row in csv_reader:
-        sql = 'INSERT INTO orchard.CIAS_ABERTAS ({}) VALUES ({})'.format(', '.join(header), ', '.join(['%s']*len(header)))
+        print(row)
         values = tuple(row)
+        print(len(header), len(values))
+        sql = 'INSERT INTO orchard.CIAS_ABERTAS ({}) VALUES ({})'.format(', '.join(header), ', '.join(['%s']*len(header)))
         cursor = cnx.cursor()
         cursor.execute(sql, values)
         cnx.commit()

@@ -17,6 +17,8 @@ services:
     depends_on:
       - database
     restart: always
+    volumes:
+      - ./api:/api
 
   # website:
   #   build: ./website
