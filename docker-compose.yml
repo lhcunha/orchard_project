@@ -16,7 +16,7 @@ services:
       - orchard
     depends_on:
       - database
-    restart: always
+    restart: on-failure:5
     volumes:
       - ./api:/api
 

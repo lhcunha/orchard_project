@@ -33,6 +33,9 @@ def insert_csv_data():
     print("Inserting the processed data in the local table...")
     for row in csv_reader:
         print(row)
+        row = [None if x == '' else x for x in row]
+        print("Valores corrigidos:")
+        print(row)
         values = tuple(row)
         print(len(header), len(values))
         sql = 'INSERT INTO orchard.CIAS_ABERTAS ({}) VALUES ({})'.format(', '.join(header), ', '.join(['%s']*len(header)))
