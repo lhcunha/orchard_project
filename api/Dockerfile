@@ -18,4 +18,6 @@ ENV MYSQL_PASSWORD=orchardpassword
 ENV MYSQL_DATABASE=orchard
 
 # Run the command to start the API service
-CMD ["python", "api.py"]
+# CMD ["python", "api.py"]
+CMD ["python3", "api.py"]
+
