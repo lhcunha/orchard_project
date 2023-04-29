@@ -9,16 +9,16 @@ services:
       - "3306:3306"
     networks:
       - orchard
-  api:
-    container_name: api
-    build: ./api
-    networks:
-      - orchard
-    depends_on:
-      - database
-    restart: on-failure:5
-    volumes:
-      - ./api:/api
+  # api:
+  #   container_name: api
+  #   build: ./api
+  #   networks:
+  #     - orchard
+  #   depends_on:
+  #     - database
+  #   restart: on-failure:5
+  #   volumes:
+  #     - ./api:/api
 
   # website:
   #   build: ./website

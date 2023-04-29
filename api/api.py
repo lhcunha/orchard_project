@@ -67,23 +67,4 @@ def insert_csv_data():
             time.sleep(60)  # Wait 60 seconds before trying again
             continue
 
-
-def schedule_insertion():
-    print('Entrou no schedule')
-    now = datetime.now()
-    print(f'Now: {now}')
-    target_time = datetime(now.year, now.month, now.day, 2, 55, 0)
-    print(f'Target time: {target_time}')
-    if now > target_time:
-         target_time += timedelta(days=1)
-
-    print(f'New target time: {target_time}')
-    time_to_wait = (target_time - now).total_seconds()
-    print(f'Time to wait: {time_to_wait}')
-    time.sleep(time_to_wait)
-    insert_csv_data()
-
-
-while True:
-    print('Entered the while true loop')
-    schedule_insertion()
+insert_csv_data()
