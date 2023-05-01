@@ -16,47 +16,65 @@ def insert_csv_data():
         try:
             # Connect to the MySQL container
             cnx = mysql.connector.connect(
-            host=mysql_host,
-            port=mysql_port,
-            user=mysql_user,
-            password=mysql_password,
-            database=mysql_database
+                host=mysql_host,
+                port=mysql_port,
+                user=mysql_user,
+                password=mysql_password,
+                database=mysql_database
             )
+
             # Get the CSV data from the URL
             print("Gathering data from the external API...")
             csv_url = 'https://dados.cvm.gov.br/dados/CIA_ABERTA/CAD/DADOS/cad_cia_aberta.csv'
             response = requests.get(csv_url)
             print("Data has been gathered.")
 
-            # Parse the CSV data and insert it into the CIAS_ABERTAS table
+            # Parse the CSV data
             print("Processing the collected data...")
             csv_data = response.content.decode('ISO-8859-1').splitlines()
             csv_reader = csv.reader(csv_data, delimiter=';', quotechar='"')
             header = next(csv_reader)
 
-            # Deletes the current contents from table
-            print("Deleting all rows from the table...")
+            # Get the existing data from the table
+            cursor1 = cnx.cursor()
+            cursor1.execute("SELECT * FROM orchard.CIAS_ABERTAS")
+            existing_data = cursor1.fetchall()
+            cursor1.close()
+
+            # Build a dictionary of the existing data keyed by CNPJ_CIA
+            existing_data_dict = {}
+            for row in existing_data:
+                existing_data_dict[row[1]] = row
+            ### print(existing_data_dict)
+
+            # Identify new and updated records and insert/update them as necessary
             cursor2 = cnx.cursor()
-            sql_delete = "DELETE FROM orchard.CIAS_ABERTAS"
-            cursor2.execute(sql_delete)
+            for row in csv_reader:
+                row = [None if x == '' else x for x in row]
+                cnpj_cia = row[0]
+                ### print(f'CNPJ da empresa do csv coletado da API: {cnpj_cia}')
+                if cnpj_cia in existing_data_dict:
+                    # Update the existing record
+                    existing_row = existing_data_dict[cnpj_cia]
+                    ### print (f'existing_row: {existing_row[2]}')
+                    values = tuple(row + list(existing_row[len(row): -1]))
+                    sql_update = 'UPDATE orchard.CIAS_ABERTAS SET {} WHERE id = {}'.format(
+                        ', '.join([h + ' = %s' for h in header]),
+                        existing_row[0]
+                    )
+                    cursor2.execute(sql_update, values)
+                else:
+                    # Insert a new record
+                    values = tuple(row)
+                    sql_insert = 'INSERT INTO orchard.CIAS_ABERTAS ({}) VALUES ({})'.format(
+                        ', '.join(header),
+                        ', '.join(['%s'] * len(header))
+                    )
+                    cursor2.execute(sql_insert, values)
+
             cnx.commit()
             cursor2.close()
-            print("All rows have been deleted.")
-
-            print("Inserting the processed updated data in the local table...")
-            for row in csv_reader:
-                ### print(row)
-                row = [None if x == '' else x for x in row]
-                # print("Fixed row values:")
-                # print(row)
-                values = tuple(row)
-                ### print(len(header), len(values))
-                sql_insert = 'INSERT INTO orchard.CIAS_ABERTAS ({}) VALUES ({})'.format(', '.join(header), ', '.join(['%s']*len(header)))
-                cursor = cnx.cursor()
-                cursor.execute(sql_insert, values)
-                cnx.commit()
-                cursor.close()
-            print("Data has been inserted. Closing database connection.")
+            print("Data has been inserted/updated. Closing database connection.")
             # Close the connection
             cnx.close()
             break
