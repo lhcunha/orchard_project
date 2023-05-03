@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Companies by Segment</title>
+  </head>
+  <body>
+    <h1>Companies by Industrial Segment</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Industrial Segment</th>
+          <th>Companies</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for segment, companies in results %}
+          <tr>
+            <td>{{ segment }}</td>
+            <td>{{ companies }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

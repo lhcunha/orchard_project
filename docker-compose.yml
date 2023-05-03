@@ -20,15 +20,15 @@ services:
   #   volumes:
   #     - ./api:/api
 
-  # website:
-  #   build: ./website
-  #   restart: always
-  #   ports:
-  #     - "5000:5000"
-  #   depends_on:
-  #     - database
-  #   networks:
-  #     - orchard
+  website:
+    build: ./website
+    restart: always
+    ports:
+      - "5000:5000"
+    depends_on:
+      - database
+    networks:
+      - orchard
   
 networks:
   orchard:
