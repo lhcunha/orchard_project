@@ -21,6 +21,7 @@ services:
   #     - ./api:/api
 
   website:
+    container_name: website
     build: ./website
     restart: always
     ports:
@@ -29,6 +30,8 @@ services:
       - database
     networks:
       - orchard
+    volumes:
+      - ./website:/app
   
 networks:
   orchard:
